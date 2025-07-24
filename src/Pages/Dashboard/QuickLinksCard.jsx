@@ -8,7 +8,7 @@ const QuickLinksCard = () => (
         <li key={link.id}>
           <a
             href={link.url}
-            className="flex items-center justify-between p-3 rounded-lg text-black-600 dark:text-indigo-400 font-medium hover:bg-green-50 dark:hover:bg-slate-700/50"
+            className="flex items-center justify-between p-3 rounded-lg text-black-600 dark:text-white-400 font-medium hover:bg-green-50 dark:hover:bg-slate-700/50"
           >
             <span>{link.name}</span>
             <span>&rarr;</span>

@@ -29,7 +29,7 @@ const OnboardingChecklistCard = () => {
             style={{ width: `${progress}%`, background: "#11b67a" }}
           ></div>
         </div>
-        <span className="ml-4 font-semibold text-black-600 dark:text-indigo-400">
+        <span className="ml-4 font-semibold text-black-600 dark:text-white-400">
           {progress}%
         </span>
       </div>
