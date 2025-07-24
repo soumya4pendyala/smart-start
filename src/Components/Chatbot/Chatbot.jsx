@@ -83,9 +83,9 @@ const Chatbot = ({ openCabModal, openITModal }) => {
         message: response.data.response,
       };
       if (response.data.toLowerCase.includes("cab")) {
-        botResponse = { ...botResponse, link: "https://routematic.com/" };
+        botResponse = { ...botResponse, link: "https://routematic.com/", linkName: "Routematic" };
       } else if (response.data.toLowerCase.includes("ticket")) {
-        botResponse = { ...botResponse, link: "https://www.servicenow.com/" };
+        botResponse = { ...botResponse, link: "https://www.servicenow.com/", linkName: "ServiceNow" };
       }
 
       if (botResponse?.action_required) {
@@ -130,6 +130,7 @@ const Chatbot = ({ openCabModal, openITModal }) => {
             sender: "bot",
             text: botResponse.message,
             link: botResponse.link ? botResponse.link : undefined,
+            linkName: botResponse.linkName ? botResponse.linkName : undefined,
           },
         ]);
       }
@@ -137,7 +138,7 @@ const Chatbot = ({ openCabModal, openITModal }) => {
       console.error("Error sending message:", error);
       setMessages((prev) => [
         ...prev,
-        { sender: "bot", text: "Sorry, something went wrong."},
+        { sender: "bot", text: "Sorry, something went wrong." },
       ]);
     }
   };
@@ -202,7 +203,7 @@ const Chatbot = ({ openCabModal, openITModal }) => {
                           rel="noopener noreferrer"
                           className="text-blue-500 hover:underline"
                         >
-                          Click here
+                            {msg?.linkName}
                         </a>
                       )}
                     </p>
