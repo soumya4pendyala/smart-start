@@ -67,7 +67,7 @@ const Chatbot = ({ openCabModal=()=>{}, openITModal=()=>{} }) => {
       setShowCabModal(true);
       return;
     } else if (
-      (messageText.includes("it ticket") ||
+      (messageText.includes("ticket") ||
         messageText.includes("it request")) &&
       !messageText.includes("category") &&
       !messageText.includes("subject") &&
@@ -103,13 +103,13 @@ const Chatbot = ({ openCabModal=()=>{}, openITModal=()=>{} }) => {
         botResponse = {
           ...botResponse,
           link: "https://routematic.com/",
-          linkName: "Routematic",
+          linkName: "Check the status : Routematic",
         };
-      } else if (response.data.response.toLowerCase.includes("ticket")) {
+      } else if (response.data.response.toLowerCase().includes("ticket")) {
         botResponse = {
           ...botResponse,
           link: "https://www.servicenow.com/",
-          linkName: "ServiceNow",
+          linkName: "Check the status : ServiceNow",
         };
       }
 
