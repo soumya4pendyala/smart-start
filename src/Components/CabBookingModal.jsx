@@ -7,13 +7,20 @@ const CabBookingModal = ({ closeModal, getCabBookingDetails, message }) => {
   const [pickup, setPickup] = useState("");
   const [dropoff, setDropoff] = useState("");
   const [pickupTime, setPickupTime] = useState("");
-  console.log("CabBookingModal message:", message);
+  const [cabType, setCabType] = useState("login");
+  function getMinDateTime() {
+    const now = new Date(Date.now() + 5 * 60 * 1000); // adds 5 minutes
+    const pad = (n) => n.toString().padStart(2, "0");
+    return `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(
+      now.getDate()
+    )}T${pad(now.getHours())}:${pad(now.getMinutes())}`;
+  }
+
   return (
     <Modal title="Book a Cab" closeModal={closeModal}>
       <form
         className="space-y-4"
         onSubmit={async (e) => {
-
           e.preventDefault();
           try {
             const response = await axios.post(
@@ -47,42 +54,110 @@ const CabBookingModal = ({ closeModal, getCabBookingDetails, message }) => {
           closeModal();
         }}
       >
-        <div>
-          <label
-            htmlFor="pickup"
-            className="block text-sm font-medium text-slate-700 dark:text-slate-300"
-          >
-            Pickup Location
+        <div class="flex items-center gap-4">
+          <label class="flex items-center space-x-2">
+            <input
+              type="radio"
+              name="option"
+              value="login"
+              class="accent-green-600 w-6 h-6"
+              checked={cabType === "login"}
+              onChange={(e) => setCabType(e.target.value)}
+            />
+            <span>Login</span>
           </label>
-          <input
-            type="text"
-            id="pickup"
-            placeholder="e.g., Knowledge Park, Hyderabad"
-            value={pickup}
-            onChange={(e) => {
-              setPickup(e.target.value);
-            }}
-            className="mt-1 block w-full rounded-md border-slate-300 dark:bg-slate-700 dark:border-slate-600 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 px-3 py-2"
-          />
-        </div>
-        <div>
-          <label
-            htmlFor="dropoff"
-            className="block text-sm font-medium text-slate-700 dark:text-slate-300"
-          >
-            Drop-off Location
+          <label class="flex items-center space-x-2">
+            <input
+              type="radio"
+              name="option"
+              value="logout"
+              class="accent-green-600 w-6 h-6"
+              onChange={(e) => setCabType(e.target.value)}
+              checked={cabType === "logout"}
+            />
+            <span>Logout</span>
           </label>
-          <input
-            type="text"
-            id="dropoff"
-            placeholder="e.g., 123 Main St, Anytown"
-            value={dropoff}
-            onChange={(e) => {
-              setDropoff(e.target.value);
-            }}
-            className="mt-1 block w-full rounded-md border-slate-300 dark:bg-slate-700 dark:border-slate-600 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 px-3 py-2"
-          />
         </div>
+        {cabType === "login" && (
+          <>
+            <div>
+              <label
+                htmlFor="pickup"
+                className="block text-sm font-medium text-slate-700 dark:text-slate-300"
+              >
+                Pickup Location
+              </label>
+              <input
+                type="text"
+                id="pickup"
+                placeholder="e.g., 123 Main St, Anytown"
+                value={pickup}
+                onChange={(e) => {
+                  setPickup(e.target.value);
+                }}
+                className="mt-1 block w-full rounded-md border-slate-300 dark:bg-slate-700 dark:border-slate-600 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 px-3 py-2"
+              />
+            </div>
+            <div>
+              <label
+                htmlFor="dropoff"
+                className="block text-sm font-medium text-slate-700 dark:text-slate-300"
+              >
+                Office Location
+              </label>
+              <input
+                type="text"
+                id="dropoff"
+                placeholder="e.g., Knowledge Park, Hyderabad"
+                value={dropoff}
+                onChange={(e) => {
+                  setDropoff(e.target.value);
+                }}
+                className="mt-1 block w-full rounded-md border-slate-300 dark:bg-slate-700 dark:border-slate-600 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 px-3 py-2"
+              />
+            </div>
+          </>
+        )}
+        {cabType === "logout" && (
+          <>
+            <div>
+              <label
+                htmlFor="pickup"
+                className="block text-sm font-medium text-slate-700 dark:text-slate-300"
+              >
+                Office Location
+              </label>
+              <input
+                type="text"
+                id="pickup"
+                placeholder="e.g., Knowledge Park, Hyderabad"
+                value={pickup}
+                onChange={(e) => {
+                  setPickup(e.target.value);
+                }}
+                className="mt-1 block w-full rounded-md border-slate-300 dark:bg-slate-700 dark:border-slate-600 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 px-3 py-2"
+              />
+            </div>
+            <div>
+              <label
+                htmlFor="dropoff"
+                className="block text-sm font-medium text-slate-700 dark:text-slate-300"
+              >
+                Drop-off Location
+              </label>
+              <input
+                type="text"
+                id="dropoff"
+                placeholder="e.g., 123 Main St, Anytown"
+                value={dropoff}
+                onChange={(e) => {
+                  setDropoff(e.target.value);
+                }}
+                className="mt-1 block w-full rounded-md border-slate-300 dark:bg-slate-700 dark:border-slate-600 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 px-3 py-2"
+              />
+            </div>
+          </>
+        )}
         <div>
           <label
             htmlFor="time"
@@ -94,6 +169,7 @@ const CabBookingModal = ({ closeModal, getCabBookingDetails, message }) => {
             type="datetime-local"
             id="time"
             value={pickupTime}
+            min={getMinDateTime()}
             onChange={(e) => {
               setPickupTime(e.target.value);
             }}
@@ -110,8 +186,13 @@ const CabBookingModal = ({ closeModal, getCabBookingDetails, message }) => {
           </button>
           <button
             type="submit"
-            className="bg-black text-white font-semibold px-4 py-2 rounded-lg hover:underline transition-colors duration-300 cursor-pointer"
-            disabled={pickup === "" || dropoff === "" || pickupTime === ""}
+            className="bg-black text-white cursor-pointer font-semibold px-4 py-2 rounded-lg transition-colors duration-300 cursor-pointerdisabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-black disabled:bg-gray-500 disabled:hover:bg-gray-500"
+            disabled={
+              !pickup.trim() ||
+              !dropoff.trim() ||
+              !pickupTime.trim() ||
+              cabType === ""
+            }
           >
             Request Cab
           </button>
