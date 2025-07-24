@@ -11,8 +11,6 @@ import Sidebar from "./Components/Sidebar";
 
 export default function App() {
   const [activePage, setActivePage] = useState("home");
-  const [showCabModal, setShowCabModal] = useState(false);
-  const [showITModal, setShowITModal] = useState(false);
 
   const renderPage = () => {
     switch (activePage) {
@@ -31,7 +29,6 @@ export default function App() {
     }
   };
 
-
   return (
     <>
       {/* <Appbar toggleSidebar={toggleSidebar} /> */}
@@ -40,16 +37,7 @@ export default function App() {
         <main className="flex-1 p-6 sm:p-10 overflow-y-auto">
           {renderPage()}
         </main>
-        <Chatbot
-          openCabModal={() => setShowCabModal(true)}
-          openITModal={() => setShowITModal(true)}
-        />
-        {showCabModal && (
-          <CabBookingModal closeModal={() => setShowCabModal(false)} />
-        )}
-        {showITModal && (
-          <ITTicketModal closeModal={() => setShowITModal(false)} />
-        )}
+        <Chatbot />
       </div>
     </>
   );

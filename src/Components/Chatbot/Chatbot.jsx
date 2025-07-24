@@ -3,10 +3,12 @@ import { Bot, Send, X } from "lucide-react";
 import axios from "axios";
 import { useEffect, useRef, useState } from "react";
 import { currentUser } from "../../mockData";
+import CabBookingModal from "../CabBookingModal";
+import ITTicketModal from "../ITTicketModal";
 
 // AI Chatbot Component
-const API_URL = "http://127.0.0.1:8000";
-const Chatbot = ({ openCabModal, openITModal }) => {
+export const API_URL = "http://127.0.0.1:8000";
+const Chatbot = ({ openCabModal=()=>{}, openITModal=()=>{} }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState([]);
   const [inputValue, setInputValue] = useState("");
@@ -14,6 +16,9 @@ const Chatbot = ({ openCabModal, openITModal }) => {
   const [sessionId] = useState(`session_${Date.now()}`);
   const [toolData, setToolData] = useState(null);
   const [toolValues, setToolValues] = useState(null);
+  const [showCabModal, setShowCabModal] = useState(false);
+  const [showITModal, setShowITModal] = useState(false);
+  const [modalMessage, setModalMessage] = useState("");
 
   useEffect(() => {
     if (isOpen && messages.length === 0) {
@@ -51,18 +56,29 @@ const Chatbot = ({ openCabModal, openITModal }) => {
     let botResponseText =
       "I'm sorry, I'm not sure how to help with that. Try asking about HR policies, booking a cab, or raising an IT ticket.";
 
-    // if (lowerCaseInput.includes("book a cab")) {
-    //   botResponseText =
-    //     "Of course. I can help you book a cab. Please fill out the details in the form that just appeared.";
-    //   openCabModal();
-    // } else if (
-    //   lowerCaseInput.includes("it ticket") ||
-    //   lowerCaseInput.includes("it request")
-    // ) {
-    //   botResponseText =
-    //     "I can certainly help with that. Please describe your IT issue in the form that just opened.";
-    //   openITModal();
-    // }
+    if (
+      messageText.includes("cab") &&
+      !messageText.includes("from") &&
+      !messageText.includes("to")    
+    ) {
+      setModalMessage(userInput);
+      botResponseText =
+        "Of course. I can help you book a cab. Please fill out the details in the form that just appeared.";
+      setShowCabModal(true);
+      return;
+    } else if (
+      (messageText.includes("it ticket") ||
+        messageText.includes("it request")) &&
+      !messageText.includes("category") &&
+      !messageText.includes("subject") &&
+      !messageText.includes("description")
+    ) {
+      setModalMessage(userInput);
+      botResponseText =
+        "I can certainly help with that. Please describe your IT issue in the form that just opened.";
+      setShowITModal(true);
+      return;
+    }
 
     try {
       const response = await axios.post(
@@ -70,6 +86,7 @@ const Chatbot = ({ openCabModal, openITModal }) => {
         {
           message: messageText,
           sessionId: sessionId,
+          // Include cab booking details if available
           // tool_values: toolValues || {}, // Send data from our modal form
         },
         {
@@ -80,12 +97,20 @@ const Chatbot = ({ openCabModal, openITModal }) => {
       );
 
       let botResponse = {
-        message: response.data.response,
+        message: response.data,
       };
-      if (response.data.toLowerCase.includes("cab")) {
-        botResponse = { ...botResponse, link: "https://routematic.com/", linkName: "Routematic" };
-      } else if (response.data.toLowerCase.includes("ticket")) {
-        botResponse = { ...botResponse, link: "https://www.servicenow.com/", linkName: "ServiceNow" };
+      if (response.data.response.toLowerCase().includes("cab")) {
+        botResponse = {
+          ...botResponse,
+          link: "https://routematic.com/",
+          linkName: "Routematic",
+        };
+      } else if (response.data.response.toLowerCase.includes("ticket")) {
+        botResponse = {
+          ...botResponse,
+          link: "https://www.servicenow.com/",
+          linkName: "ServiceNow",
+        };
       }
 
       if (botResponse?.action_required) {
@@ -98,7 +123,7 @@ const Chatbot = ({ openCabModal, openITModal }) => {
           openCabModal();
         } else if (
           tool_name.includes("create_ticket") ||
-          lowerCaseInput.includes("it request")
+          messageText.includes("it request")
         ) {
           botResponseText =
             "I can certainly help with that. Please describe your IT issue in the form that just opened.";
@@ -128,7 +153,7 @@ const Chatbot = ({ openCabModal, openITModal }) => {
           {
             id: Date.now() + 1,
             sender: "bot",
-            text: botResponse.message,
+            text: botResponse.message.response,
             link: botResponse.link ? botResponse.link : undefined,
             linkName: botResponse.linkName ? botResponse.linkName : undefined,
           },
@@ -141,6 +166,13 @@ const Chatbot = ({ openCabModal, openITModal }) => {
         { sender: "bot", text: "Sorry, something went wrong." },
       ]);
     }
+  };
+
+  const getCabBookingDetails = (details) => {
+    setMessages((prev) => [...prev, details]);
+  };
+  const getItRequestDetails = (details) => {
+    setMessages((prev) => [...prev, details]);
   };
 
   return (
@@ -203,7 +235,7 @@ const Chatbot = ({ openCabModal, openITModal }) => {
                           rel="noopener noreferrer"
                           className="text-blue-500 hover:underline"
                         >
-                            {msg?.linkName}
+                          {msg?.linkName}
                         </a>
                       )}
                     </p>
@@ -238,6 +270,20 @@ const Chatbot = ({ openCabModal, openITModal }) => {
           </form>
         </footer>
       </div>
+      {showCabModal && (
+        <CabBookingModal
+          getCabBookingDetails={getCabBookingDetails}
+          closeModal={() => setShowCabModal(false)}
+          message={modalMessage}
+        />
+      )}
+      {showITModal && (
+        <ITTicketModal
+          closeModal={() => setShowITModal(false)}
+          message={modalMessage}
+          getItRequestDetails={getItRequestDetails}
+        />
+      )}
     </>
   );
 };
