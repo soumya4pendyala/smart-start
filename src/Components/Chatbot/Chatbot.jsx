@@ -121,7 +121,7 @@ const Chatbot = ({ openCabModal, openITModal }) => {
             <div className={`fixed bottom-6 right-6 transition-all duration-300 ${isOpen ? 'opacity-0 scale-90' : 'opacity-100 scale-100'}`}>
                 <button
                     onClick={() => setIsOpen(true)}
-                    className="bg-black text-white rounded-full p-4 shadow-lg hover:bg-white hover:text-black focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-white-500"
+                    className="bg-black text-white rounded-full p-4 shadow-lg hover:bg-white hover:text-black focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-white-500 cursor-pointer"
                     aria-label="Open Chat"
                 >
                     <Bot className="h-8 w-8" />
@@ -141,7 +141,7 @@ const Chatbot = ({ openCabModal, openITModal }) => {
                     <div className="space-y-4">
                         {messages.map(msg => (
                             <div key={msg.id} className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
-                                <div className={`max-w-xs lg:max-w-sm px-4 py-2 rounded-2xl ${msg.sender === 'user' ? 'bg-indigo-600 text-white rounded-br-none' : 'bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-slate-200 rounded-bl-none'}`}>
+                                <div className={`max-w-xs wrap-anywhere lg:max-w-sm px-4 py-2 rounded-2xl ${msg.sender === 'user' ? 'bg-green-500 text-white rounded-br-none' : 'bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-slate-200 rounded-bl-none'}`}>
                                     <p className="text-sm">{msg.text}</p>
                                 </div>
                             </div>
@@ -154,6 +154,7 @@ const Chatbot = ({ openCabModal, openITModal }) => {
                         <input
                             type="text"
                             value={inputValue}
+                            maxLength={100}
                             onChange={(e) => setInputValue(e.target.value)}
                             placeholder="Ask me anything..."
                             className="flex-1 bg-slate-100 dark:bg-slate-700 border-transparent focus:ring-green-500 focus:border-green-500 rounded-full py-2 px-4"
